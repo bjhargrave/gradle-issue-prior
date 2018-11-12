@@ -1,0 +1,34 @@
+/*
+ *
+ */
+
+apply plugin: 'java'
+group 'test'
+version = '1.1.0'
+
+repositories {
+  maven {
+    url uri('repodir')
+  }
+  mavenCentral()
+}
+
+configurations {
+  prior
+  prior.transitive = false
+  prior.defaultDependencies { deps ->
+    println "prior: defaultDependencies ${group}:${project.name}:(,${project.version}["
+    Dependency priorDep = dependencies.create('group': group, 'name': project.name, 'version': "(,${project.version}[") {
+      force = true
+      transitive = false
+    }
+    println "priorDep: ${priorDep}"
+    deps.add(priorDep)
+  }
+}
+
+task prior {
+  doFirst {
+    println "prior: ${configurations.prior.asPath}"
+  }
+}
